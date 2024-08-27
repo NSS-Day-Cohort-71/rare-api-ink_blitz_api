@@ -13,9 +13,9 @@ class JSONServer(HandleRequests):
         request_body = json.loads(request_body)
 
         if url["requested_resource"] == "register":
-            successfully_created = create_user(request_body)
+            new_user_id = successfully_created = create_user(request_body)
         
-            return self.response(successfully_created, status.HTTP_201_SUCCESS_CREATED.value)
+            return self.response(json.dumps({"id": new_user_id}), status.HTTP_201_SUCCESS_CREATED.value)
         
         return self.response("", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
 
