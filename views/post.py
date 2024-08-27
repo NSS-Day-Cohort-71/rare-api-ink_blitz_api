@@ -9,19 +9,17 @@ def create_post(post):
 
 
         db_cursor.execute("""
-            Insert into Posts (user_id, category_id, title, publication_date, image_url, content, approved) values (?,?,?,?,?,?,?)
+            Insert into Posts (user_id, category_id, title, publication_date, image_url, content, approved) values (?,?,?,?,?,?,True)
         """,(
             post['user_id'],
             post['category_id'],
             post['title'],
             datetime.now(),
             post['image_url'],
-            post['content'],
-            post['approved']
+            post['content']
         ))
 
-        id = db_cursor.lastrowid
+        new_post_id = db_cursor.lastrowid
 
-        return {
-            'token': id
-        }
+        return new_post_id
+        
