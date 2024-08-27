@@ -2,6 +2,7 @@ import json
 from http.server import HTTPServer
 from nss_handler import HandleRequests, status
 from views import create_user, login_user
+from views import create_post
 
 
 class JSONServer(HandleRequests):
@@ -33,6 +34,14 @@ class JSONServer(HandleRequests):
 
             if user_response:
                 return self.response(user_response, status.HTTP_200_SUCCESS.value)
+        
+        elif url["requested_resource"] == "posts":
+            post_response = create_post(request_body)
+
+            if post_response:
+                return self.response(
+                    json.dumps(post_response), status.HTTP_201_SUCCESS_CREATED.value
+                )
 
         return self.response("", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
 
