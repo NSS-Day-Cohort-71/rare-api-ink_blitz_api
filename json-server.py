@@ -2,7 +2,7 @@ import json
 from http.server import HTTPServer
 from nss_handler import HandleRequests, status
 from views import create_user, login_user
-from views import create_post
+from views import create_post, retrieve_post
 
 
 class JSONServer(HandleRequests):
@@ -28,13 +28,13 @@ class JSONServer(HandleRequests):
             #         json.dumps({"valid": False}),
             #         status.HTTP_400_CLIENT_ERROR_BAD_REQUEST_DATA.value,
             #     )
-        
+
         elif url["requested_resource"] == "login":
             user_response = login_user(request_body)
 
             if user_response:
                 return self.response(user_response, status.HTTP_200_SUCCESS.value)
-        
+
         elif url["requested_resource"] == "posts":
             post_response = create_post(request_body)
 
@@ -45,9 +45,20 @@ class JSONServer(HandleRequests):
 
         return self.response("", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
 
+    def do_GET(self):
 
+        response_body = ""
+        url = self.parse_url(self.path)
 
-        
+        if url["requested_resource"] == "posts":
+            if url["pk"] != 0:
+                response_body = retrieve_post(url["pk"])
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
+            return self.response(
+                "", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value
+            )
+
 
 def main():
     host = ""
