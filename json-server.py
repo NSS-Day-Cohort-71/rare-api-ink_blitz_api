@@ -2,7 +2,7 @@ import json
 from http.server import HTTPServer
 from nss_handler import HandleRequests, status
 from views import create_user, login_user
-from views import create_post, retrieve_post
+from views import create_post, retrieve_post, list_posts
 
 
 class JSONServer(HandleRequests):
@@ -46,18 +46,29 @@ class JSONServer(HandleRequests):
         return self.response("", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
 
     def do_GET(self):
-
         response_body = ""
         url = self.parse_url(self.path)
 
         if url["requested_resource"] == "posts":
+            # Handle single post retrieval by primary key
             if url["pk"] != 0:
                 response_body = retrieve_post(url["pk"])
-                return self.response(response_body, status.HTTP_200_SUCCESS.value)
-
+                if response_body:  # Check if the post exists
+                    return self.response(response_body, status.HTTP_200_SUCCESS.value)
+                else:
+                    return self.response(
+                        "Post not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value
+                    )
+            
+            # Handle listing all posts
+            response_body = list_posts()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+        else:
+            # Handle non-existing resources
             return self.response(
-                "", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value
+                "Resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value
             )
+
 
 
 def main():
