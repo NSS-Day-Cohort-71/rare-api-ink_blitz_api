@@ -82,7 +82,7 @@ class JSONServer(HandleRequests):
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
 
-                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
             
         elif url["requested_resource"] == "users":
             if url["pk"] != 0:
