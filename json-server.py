@@ -1,8 +1,7 @@
 import json
 from http.server import HTTPServer
 from nss_handler import HandleRequests, status
-
-from views import create_user, login_user, get_all_users
+from views import create_user, login_user, get_all_users, retrieve_user
 from views import create_category
 from views import create_post, retrieve_post, update_post, list_posts
 from views import create_tag
@@ -46,7 +45,7 @@ class JSONServer(HandleRequests):
                 return self.response(
                     json.dumps(post_response), status.HTTP_201_SUCCESS_CREATED.value
                 )
-        
+
         elif url["requested_resource"] == "categories":
             category_response = create_category(request_body)
 
@@ -84,19 +83,22 @@ class JSONServer(HandleRequests):
 
 
             
+
         elif url["requested_resource"] == "users":
             if url["pk"] != 0:
-                pass
+                response_body = retrieve_user(url["pk"])
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
             else:
                 response_body = get_all_users()
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
         return self.response("", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
+
     def do_PUT(self):
         url = self.parse_url(self.path)
         pk = url["pk"]
 
-        content_len = int(self.headers.get('content-length', 0))
+        content_len = int(self.headers.get("content-length", 0))
         request_body = self.rfile.read(content_len)
         request_body = json.loads(request_body)
 
@@ -104,7 +106,9 @@ class JSONServer(HandleRequests):
             if pk != 0:
                 successfully_updated = update_post(pk, request_body)
                 if successfully_updated:
-                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+                    return self.response(
+                        "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
+                    )
 
 
         return self.response("", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
