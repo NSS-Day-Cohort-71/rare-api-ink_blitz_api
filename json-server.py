@@ -1,7 +1,7 @@
 import json
 from http.server import HTTPServer
 from nss_handler import HandleRequests, status
-from views import create_user, login_user
+from views import create_user, login_user, get_all_users
 from views import create_category
 from views import create_post, retrieve_post, update_post
 
@@ -61,10 +61,15 @@ class JSONServer(HandleRequests):
             if url["pk"] != 0:
                 response_body = retrieve_post(url["pk"])
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            
+        elif url["requested_resource"] == "users":
+            if url["pk"] != 0:
+                pass
+            else:
+                response_body = get_all_users()
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
-            return self.response(
-                "", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value
-            )
+        return self.response("", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
     def do_PUT(self):
         url = self.parse_url(self.path)
         pk = url["pk"]
