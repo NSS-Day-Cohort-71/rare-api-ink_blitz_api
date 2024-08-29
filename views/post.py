@@ -56,21 +56,23 @@ def retrieve_post(pk):
 
     return serialized_post
 
+
 def update_post(pk, post_data):
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
 
         db_cursor.execute(
-    """UPDATE Posts
+            """UPDATE Posts
         SET 
-            title = ?,
+            title = ?,  
             image_url = ?,
             content = ?
         WHERE id = ?
     """,
-    (post_data["title"], post_data["image_url"], post_data["content"], pk))
-        
+            (post_data["title"], post_data["image_url"], post_data["content"], pk),
+        )
+
         rows_affected = db_cursor.rowcount
 
-    return True if rows_affected > 0 else False 
+    return True if rows_affected > 0 else False
