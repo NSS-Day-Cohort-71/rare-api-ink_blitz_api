@@ -3,6 +3,7 @@ from http.server import HTTPServer
 from nss_handler import HandleRequests, status
 from views import create_user, login_user
 from views import create_post, retrieve_post
+from views import create_category
 
 
 class JSONServer(HandleRequests):
@@ -42,6 +43,12 @@ class JSONServer(HandleRequests):
                 return self.response(
                     json.dumps(post_response), status.HTTP_201_SUCCESS_CREATED.value
                 )
+        
+        elif url["requested_resource"] == "categories":
+            category_response = create_category(request_body)
+
+            if category_response:
+                return self.response(json.dumps(category_response), status.HTTP_201_SUCCESS_CREATED.value)
 
         return self.response("", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
 
