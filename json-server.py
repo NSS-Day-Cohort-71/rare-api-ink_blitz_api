@@ -1,8 +1,12 @@
 import json
 from http.server import HTTPServer
 from nss_handler import HandleRequests, status
-from views import create_user, login_user
-from views import create_post, retrieve_post, list_posts
+
+from views import create_user, login_user, get_all_users
+from views import create_category
+from views import create_post, retrieve_post, update_post, list_posts
+from views import create_tag
+
 
 
 class JSONServer(HandleRequests):
@@ -42,6 +46,18 @@ class JSONServer(HandleRequests):
                 return self.response(
                     json.dumps(post_response), status.HTTP_201_SUCCESS_CREATED.value
                 )
+        
+        elif url["requested_resource"] == "categories":
+            category_response = create_category(request_body)
+
+            if category_response:
+                return self.response(json.dumps(category_response), status.HTTP_201_SUCCESS_CREATED.value)
+        
+        elif url["requested_resource"] == "tags":
+            tag_response = create_tag(request_body)
+
+            if tag_response:
+                return self.response(json.dumps(tag_response), status.HTTP_201_SUCCESS_CREATED.value)
 
         return self.response("", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
 
@@ -53,6 +69,7 @@ class JSONServer(HandleRequests):
             # Handle single post retrieval by primary key
             if url["pk"] != 0:
                 response_body = retrieve_post(url["pk"])
+
                 if response_body:  # Check if the post exists
                     return self.response(response_body, status.HTTP_200_SUCCESS.value)
                 else:
@@ -63,12 +80,34 @@ class JSONServer(HandleRequests):
             # Handle listing all posts
             response_body = list_posts()
             return self.response(response_body, status.HTTP_200_SUCCESS.value)
-        else:
-            # Handle non-existing resources
-            return self.response(
-                "Resource not found", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value
-            )
 
+
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            
+        elif url["requested_resource"] == "users":
+            if url["pk"] != 0:
+                pass
+            else:
+                response_body = get_all_users()
+                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
+        return self.response("", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
+    def do_PUT(self):
+        url = self.parse_url(self.path)
+        pk = url["pk"]
+
+        content_len = int(self.headers.get('content-length', 0))
+        request_body = self.rfile.read(content_len)
+        request_body = json.loads(request_body)
+
+        if url["requested_resource"] == "posts":
+            if pk != 0:
+                successfully_updated = update_post(pk, request_body)
+                if successfully_updated:
+                    return self.response("", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value)
+
+
+        return self.response("", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
 
 
 def main():
