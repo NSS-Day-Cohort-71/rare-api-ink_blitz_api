@@ -113,6 +113,7 @@ def retrieve_user(pk):
         u.last_name,
         u.profile_image_url,
         u.email,
+        u.username,
         u.created_on
         FROM Users u
         WHERE u.id = ?
