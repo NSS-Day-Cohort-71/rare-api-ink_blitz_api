@@ -63,7 +63,6 @@ def update_post(pk, post_data):
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
 
-
         db_cursor.execute(
             """UPDATE Posts
         SET 
@@ -77,16 +76,16 @@ def update_post(pk, post_data):
 
         rows_affected = db_cursor.rowcount
 
+    return True if rows_affected > 0 else False
 
-    return True if rows_affected > 0 else False 
 
-  
 def list_posts():
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
-        
-        db_cursor.execute("""
+
+        db_cursor.execute(
+            """
         SELECT
             p.id,
             p.user_id,
@@ -101,13 +100,29 @@ def list_posts():
         JOIN Users u ON u.id = p.user_id
         WHERE p.approved = 1
         ORDER BY p.publication_date DESC                                                                                                                    
-        """)
+        """
+        )
         query_results = db_cursor.fetchall()
 
-        posts=[]
+        posts = []
         for row in query_results:
             posts.append(dict(row))
-        
+
         serialized_posts = json.dumps(posts)
 
     return serialized_posts
+
+
+def delete_post(pk):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+        DELETE FROM Posts WHERE id = ?
+    """,
+            (pk,),
+        )
+        number_of_rows_deleted = db_cursor.rowcount
+
+    return True if number_of_rows_deleted > 0 else False
