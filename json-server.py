@@ -5,7 +5,7 @@ from views import create_user, login_user, get_all_users, retrieve_user
 from views import create_category, list_categories
 from views import create_post, retrieve_post, update_post, list_posts, delete_post
 from views import create_tag, list_tags, retrieve_tag, update_tag, delete_tags
-
+from views import create_comment, list_comments
 
 
 class JSONServer(HandleRequests):
@@ -61,6 +61,13 @@ class JSONServer(HandleRequests):
                 return self.response(
                     json.dumps(tag_response), status.HTTP_201_SUCCESS_CREATED.value
                 )
+        elif url["requested_resource"] == "comments":
+            comment_response = create_comment(request_body)
+
+            if comment_response:
+                return self.response(
+                    json.dumps(comment_response), status.HTTP_201_SUCCESS_CREATED.value
+                )
 
         return self.response("", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
 
@@ -102,8 +109,12 @@ class JSONServer(HandleRequests):
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
         elif url["requested_resource"] == "categories":
-                response_body = list_categories()
-                return self.response(response_body, status.HTTP_200_SUCCESS.value)
+            response_body = list_categories()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
+
+        elif url["requested_resource"] == "comments":
+            response_body = list_comments()
+            return self.response(response_body, status.HTTP_200_SUCCESS.value)
 
         return self.response("", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
 
