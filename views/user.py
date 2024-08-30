@@ -44,8 +44,16 @@ def create_user(user):
         user (dictionary): The dictionary passed to the register post request
 
     Returns:
-        json string: Contains the token of the newly created user
+        json string: Contains the token of the newly created user or an error message
     """
+    if (
+        not user.get("first_name")
+        or not user.get("last_name")
+        or not user.get("username")
+        or not user.get("email")
+    ):
+        return {"error": "All fields are required"}, 400
+
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
         db_cursor = conn.cursor()
