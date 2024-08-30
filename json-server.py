@@ -4,7 +4,8 @@ from nss_handler import HandleRequests, status
 from views import create_user, login_user, get_all_users, retrieve_user
 from views import create_category, list_categories
 from views import create_post, retrieve_post, update_post, list_posts, delete_post
-from views import create_tag, list_tags, retrieve_tag, update_tag
+from views import create_tag, list_tags, retrieve_tag, update_tag, delete_tags
+
 
 
 class JSONServer(HandleRequests):
@@ -138,6 +139,13 @@ class JSONServer(HandleRequests):
         if url["requested_resource"] == "posts":
             if pk != 0:
                 successfully_deleted = delete_post(pk)
+                if successfully_deleted:
+                    return self.response(
+                        "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
+                    )
+        elif url["requested_resource"] == "tags":
+            if pk != 0:
+                successfully_deleted = delete_tags(pk)
                 if successfully_deleted:
                     return self.response(
                         "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
