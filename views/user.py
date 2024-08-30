@@ -89,13 +89,7 @@ def get_all_users():
         users = []
 
         for row in query_results:
-            user = {
-                "id": row["id"],
-                "first_name": row["first_name"],
-                "last_name": row["last_name"],
-                "username": row["username"],
-            }
-            users.append(user)
+            users.append(dict(row))
 
         serialized_users = json.dumps(users)
         return serialized_users
