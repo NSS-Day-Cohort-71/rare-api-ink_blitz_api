@@ -36,6 +36,6 @@ def list_categories():
         for row in query_results:
             categories.append(dict(row))
         
-        serialized_posts = json.dumps(categories)
+        serialized_categories = json.dumps(categories)
     
-    return serialized_posts
+    return serialized_categories
