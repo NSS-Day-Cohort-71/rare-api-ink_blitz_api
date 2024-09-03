@@ -39,3 +39,21 @@ def list_categories():
         serialized_categories = json.dumps(categories)
     
     return serialized_categories
+
+def update_category(pk, category_data):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """UPDATE Categories
+            SET
+                label = ?
+            WHERE id = ?
+            """,
+            (category_data["label"], pk)
+        )
+
+        rows_affected = db_cursor.rowcount
+
+    return True if rows_affected > 0 else False
