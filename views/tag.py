@@ -42,6 +42,19 @@ def list_tags():
     return serialized_tags
 
 
+def delete_tags(pk):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+        db_cursor.execute(
+            """
+        DELETE FROM Tags WHERE id = ?
+    """,
+            (pk,),
+        )
+        number_of_rows_deleted = db_cursor.rowcount
+
+    return True if number_of_rows_deleted > 0 else False
+
 def retrieve_tag(pk):
     with sqlite3.connect("./db.sqlite3") as conn:
         conn.row_factory = sqlite3.Row
@@ -81,3 +94,4 @@ def update_tag(pk, tag_data):
     rows_affected = db_cursor.rowcount
 
     return True if rows_affected > 0 else False
+
