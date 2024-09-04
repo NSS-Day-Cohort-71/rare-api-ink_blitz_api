@@ -59,6 +59,6 @@ def update_comment(pk, comment_data):
     """,
             (comment_data["content"], pk),
         )
-
+        conn.commit()
         rows_affected = db_cursor.rowcount
     return True if rows_affected > 0 else False
