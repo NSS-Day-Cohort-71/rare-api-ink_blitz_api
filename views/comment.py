@@ -52,6 +52,23 @@ def list_comments():
 
     return serialized_posts
 
+def update_comment(pk, comment_data):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """UPDATE Comments
+        SET
+            content = ?
+        WHERE id = ?
+    """,
+            (comment_data["content"], pk),
+        )
+        conn.commit()
+        rows_affected = db_cursor.rowcount
+    return True if rows_affected > 0 else False
+
 
 def delete_comments(pk):
     with sqlite3.connect("./db.sqlite3") as conn:
@@ -65,3 +82,4 @@ def delete_comments(pk):
         number_of_rows_deleted = db_cursor.rowcount
 
     return True if number_of_rows_deleted > 0 else False
+

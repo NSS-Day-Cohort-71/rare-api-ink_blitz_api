@@ -5,7 +5,8 @@ from views import create_user, login_user, get_all_users, retrieve_user
 from views import create_category, list_categories, update_category, retrieve_category, delete_category
 from views import create_post, retrieve_post, update_post, list_posts, delete_post
 from views import create_tag, list_tags, retrieve_tag, update_tag, delete_tags
-from views import create_comment, list_comments, delete_comments
+
+from views import create_comment, list_comments, delete_comments, update_comment
 
 
 class JSONServer(HandleRequests):
@@ -153,6 +154,13 @@ class JSONServer(HandleRequests):
                     return self.response(
                         "", 
                         status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
+                    )
+        elif url["requested_resource"] == "comments":
+            if pk != 0:
+                successfully_updated = update_comment(pk, request_body)
+                if successfully_updated:
+                    return self.response(
+                        "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
                     )
 
         return self.response("", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
