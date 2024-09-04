@@ -5,7 +5,7 @@ from views import create_user, login_user, get_all_users, retrieve_user
 from views import create_category, list_categories, update_category, retrieve_category, delete_category
 from views import create_post, retrieve_post, update_post, list_posts, delete_post
 from views import create_tag, list_tags, retrieve_tag, update_tag, delete_tags
-from views import create_comment, list_comments
+from views import create_comment, list_comments, delete_comments
 
 
 class JSONServer(HandleRequests):
@@ -179,6 +179,14 @@ class JSONServer(HandleRequests):
         elif url["requested_resource"] == "categories":
             if pk != 0:
                 successfully_deleted = delete_category(pk)
+                if successfully_deleted:
+                    return self.response(
+                        "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
+                    )
+
+        elif url["requested_resource"] == "comments":
+            if pk != 0:
+                successfully_deleted = delete_comments(pk)
                 if successfully_deleted:
                     return self.response(
                         "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
