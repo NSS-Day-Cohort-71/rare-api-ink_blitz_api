@@ -8,9 +8,14 @@ def create_comment(comment):
         db_cursor = conn.cursor()
         db_cursor.execute(
             """
-            INSERT INTO Comments (post_id, author_id, content) VALUES (?,?,?)
+            INSERT INTO Comments (post_id, author_id, content, created_on) VALUES (?,?,?,?)
         """,
-            (comment["post_id"], comment["author_id"], comment["content"]),
+            (
+                comment["post_id"],
+                comment["author_id"],
+                comment["content"],
+                comment["created_on"],
+            ),
         )
 
         new_comment_id = db_cursor.lastrowid
@@ -30,6 +35,7 @@ def list_comments():
             c.post_id,
             c.author_id,
             c.content,
+            c.created_on,
             u.username
         FROM Comments c
         JOIN Users u ON u.id = c.author_id
@@ -62,3 +68,18 @@ def update_comment(pk, comment_data):
         conn.commit()
         rows_affected = db_cursor.rowcount
     return True if rows_affected > 0 else False
+
+
+def delete_comments(pk):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        db_cursor = conn.cursor()
+        db_cursor.execute(
+            """
+        DELETE FROM Comments WHERE id = ?
+    """,
+            (pk,),
+        )
+        number_of_rows_deleted = db_cursor.rowcount
+
+    return True if number_of_rows_deleted > 0 else False
+
