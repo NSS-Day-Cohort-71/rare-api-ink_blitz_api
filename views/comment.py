@@ -8,9 +8,14 @@ def create_comment(comment):
         db_cursor = conn.cursor()
         db_cursor.execute(
             """
-            INSERT INTO Comments (post_id, author_id, content) VALUES (?,?,?)
+            INSERT INTO Comments (post_id, author_id, content, created_on) VALUES (?,?,?,?)
         """,
-            (comment["post_id"], comment["author_id"], comment["content"]),
+            (
+                comment["post_id"],
+                comment["author_id"],
+                comment["content"],
+                comment["created_on"],
+            ),
         )
 
         new_comment_id = db_cursor.lastrowid
@@ -30,6 +35,7 @@ def list_comments():
             c.post_id,
             c.author_id,
             c.content,
+            c.created_on,
             u.username
         FROM Comments c
         JOIN Users u ON u.id = c.author_id
