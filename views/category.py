@@ -39,9 +39,48 @@ def list_categories():
             categories.append(dict(row))
 
         serialized_categories = json.dumps(categories)
-
+    
     return serialized_categories
 
+def retrieve_category(pk):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+            SELECT
+                c.id,
+                c.label
+            FROM Categories c
+            WHERE c.id = ?
+            """,
+            (pk,)
+        )
+        query_results = db_cursor.fetchone()
+
+        serialized_category = json.dumps(dict(query_results))
+
+        return serialized_category
+
+def update_category(pk, category_data):
+    with sqlite3.connect("./db.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute(
+            """
+            UPDATE Categories
+            SET
+                label = ?
+            WHERE id = ?
+            """,
+                (category_data["label"], pk)
+        )
+
+        rows_affected = db_cursor.rowcount
+
+    return True if rows_affected > 0 else False
 
 def delete_category(pk):
     with sqlite3.connect("./db.sqlite3") as conn:
@@ -49,10 +88,11 @@ def delete_category(pk):
 
         db_cursor.execute(
             """
-DELETE FROM Categories WHERE id = ?
+  DELETE FROM Categories WHERE id = ?
     """,
             (pk,),
         )
         number_of_rows_deleted = db_cursor.rowcount
 
     return True if number_of_rows_deleted > 0 else False
+
