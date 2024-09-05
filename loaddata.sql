@@ -92,3 +92,4 @@ INSERT INTO Reactions ('label', 'image_url') VALUES ('happy', 'https://pngtree.c
 ALTER TABLE Comments ADD "created_on" date;
 
 DELETE FROM sqlite_sequence WHERE name = "PostTags";
+DELETE FROM "PostTags";
