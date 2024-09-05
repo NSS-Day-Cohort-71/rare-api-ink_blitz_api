@@ -90,3 +90,6 @@ INSERT INTO Tags ('label') VALUES ('JavaScript');
 INSERT INTO Reactions ('label', 'image_url') VALUES ('happy', 'https://pngtree.com/so/happy');
 
 ALTER TABLE Comments ADD "created_on" date;
+
+DELETE FROM sqlite_sequence WHERE name = "PostTags";
+DELETE FROM "PostTags";
