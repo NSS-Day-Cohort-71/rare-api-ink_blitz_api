@@ -12,7 +12,7 @@ from views import (
 from views import create_post, retrieve_post, update_post, list_posts, delete_post
 from views import create_tag, list_tags, retrieve_tag, update_tag, delete_tags
 from views import create_comment, list_comments, delete_comments, update_comment
-from views import create_post_tag, retrieve_post_tags
+from views import create_post_tag, retrieve_post_tags, remove_post_tag
 
 
 class JSONServer(HandleRequests):
@@ -213,6 +213,15 @@ class JSONServer(HandleRequests):
                     return self.response(
                         "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
                     )
+                
+        elif url["requested_resource"] == "postTags":
+            if pk != 0:
+                successfully_deleted = remove_post_tag(pk)
+                if successfully_deleted:
+                    return self.response(
+                        "", status.HTTP_204_SUCCESS_NO_RESPONSE_BODY.value
+                    )
+                
         return self.response("", status.HTTP_404_CLIENT_ERROR_RESOURCE_NOT_FOUND.value)
 
 
