@@ -10,7 +10,7 @@ def create_post(post):
 
         db_cursor.execute(
             """
-            Insert into Posts (user_id, category_id, title, publication_date, image_url, content, approved) values (?,?,?,?,?,?,True)
+            Insert into Posts (user_id, category_id, title, publication_date, image_url, content, approved) values (?,?,?,?,?,?,False)
         """,
             (
                 post["user_id"],
@@ -43,9 +43,11 @@ def retrieve_post(pk):
             p.image_url,
             p.content,
             p.approved,
-            u.username
+            u.username,
+            c.label AS category_label
         FROM Posts p
         JOIN Users u ON u.id = p.user_id
+        JOIN Categories c ON c.id = p.category_id
         WHERE p.id = ?
         """,
             (pk,),
@@ -68,10 +70,17 @@ def update_post(pk, post_data):
         SET 
             title = ?,  
             image_url = ?,
-            content = ?
+            content = ?,
+            category_id = ?
         WHERE id = ?
     """,
-            (post_data["title"], post_data["image_url"], post_data["content"], pk),
+            (
+                post_data["title"],
+                post_data["image_url"],
+                post_data["content"],
+                post_data["category_id"],
+                pk,
+            ),
         )
 
         rows_affected = db_cursor.rowcount
