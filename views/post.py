@@ -10,7 +10,7 @@ def create_post(post):
 
         db_cursor.execute(
             """
-            Insert into Posts (user_id, category_id, title, publication_date, image_url, content, approved) values (?,?,?,?,?,?,False)
+            Insert into Posts (user_id, category_id, title, publication_date, image_url, content, approved) values (?,?,?,?,?,?,True)
         """,
             (
                 post["user_id"],
